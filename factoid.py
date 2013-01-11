@@ -32,7 +32,7 @@ def get_fact(conn, subject):
 
 
 def question(phenny, input): 
-    """Answers a questions."""
+    """Answers a question."""
     question = input.group(1)
     conn = sqlite3.connect(dbfile)
     word = get_fact(conn, question)

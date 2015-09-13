@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-factoid.py - Phenny Fact Module
+factoid.py - Phenny/Sopal Fact Module
 Licensed under the Eiffel Forum License 2.
 
 http://inamidst.com/phenny/
@@ -15,7 +15,7 @@ stock_answers = [
 ]
 
 def setup(self):
-    homedir = self.config.homedir or '~/.phenny'
+    homedir = self.config.homedir or '~/.bot'
     self.factoiddb = os.path.join(homedir, 'factoids.db')
     conn = sqlite3.connect(self.factoiddb)
     c = conn.cursor()
@@ -31,20 +31,20 @@ def get_fact(conn, subject):
     return
 
 
-def question(phenny, input): 
+def question(bot, input): 
     """Answers a question."""
     question = input.group(1)
-    conn = sqlite3.connect(phenny.factoiddb)
+    conn = sqlite3.connect(bot.factoiddb)
     word = get_fact(conn, question)
     if word:
-        phenny.say(question + " is " + word)
+        bot.say(question + " is " + word)
     else:
-        phenny.say(random.choice(stock_answers))
+        bot.say(random.choice(stock_answers))
 question.rule = '$nick\s*(.*)\?\s*$'
 question.example = '$nickname: grass?'
 question.priority = 'medium'
 
-def factoid(phenny, input):
+def factoid(bot, input):
     """A database of facts"""
 
     no      = input.group(1)
@@ -52,7 +52,7 @@ def factoid(phenny, input):
     also    = input.group(3)
     factoid = input.group(4)
 
-    conn = sqlite3.connect(phenny.factoiddb)
+    conn = sqlite3.connect(bot.factoiddb)
 
     oldfactoid = get_fact(conn, subject)
 
@@ -63,33 +63,33 @@ def factoid(phenny, input):
         conn.commit()
     elif also:
         if not oldfactoid:
-            phenny.say("I'm not familiar with ".append(subject))
+            bot.say("I'm not familiar with ".append(subject))
             return
         newfactoid = " or ".join((oldfactoid, factoid))
         c.execute("""REPLACE INTO factoids values(?,?)""",(subject, newfactoid))
         conn.commit()
     elif oldfactoid:
-        phenny.say("But %s is %s..." % (subject, oldfactoid))
+        bot.say("But %s is %s..." % (subject, oldfactoid))
         return
     else:
         c.execute("""INSERT INTO factoids values(?, ?)""", (subject, factoid))
         conn.commit()
-    phenny.say('ok')
+    bot.say('ok')
 factoid.rule = '$nick\s*(no, )?(.+?) is (also )?(.*[^?])$'
 factoid.example = '$nickname: grass is green'
 factoid.priority = 'medium'
 
-def forget(phenny, input):
+def forget(bot, input):
     """Forget a fact"""
     subject = input.group(2)
-    conn = sqlite3.connect(phenny.factoiddb)
+    conn = sqlite3.connect(bot.factoiddb)
     c = conn.cursor()
     try:
         c.execute("""DELETE FROM factoids WHERE word=?""", (subject,))
         conn.commit()
-        phenny.say("I don't remember what %s is" % (subject,))
+        bot.say("I don't remember what %s is" % (subject,))
     except:
-        phenny.say('err...')
+        bot.say('err...')
 forget.commands = ['forget']
 forget.priority = 'medium'
 # forget.example = 'forget grass'

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-setter.py - Phenny Fact Module
+factoid.py - Phenny Fact Module
 Licensed under the Eiffel Forum License 2.
 
 http://inamidst.com/phenny/
@@ -40,7 +40,7 @@ def question(phenny, input):
         phenny.say(question + " is " + word)
     else:
         phenny.say(random.choice(stock_answers))
-question.rule = ('$nick', '(.*)\?\s*$')
+question.rule = '$nick\s*(.*)\?\s*$'
 question.example = '$nickname: grass?'
 question.priority = 'medium'
 
@@ -75,9 +75,9 @@ def factoid(phenny, input):
         c.execute("""INSERT INTO factoids values(?, ?)""", (subject, factoid))
         conn.commit()
     phenny.say('ok')
-factoid.rule = ('$nick', '(no, )?(.+?) is (also )?(.*[^?])$')
-factoid.example = '$nickname: grass is green'
+factoid.rule = '$nick\s*(no, )?(.+?) is (also )?(.*[^?])$'
 factoid.priority = 'medium'
+# factoid.example = '$nickname: grass is green'
 
 def forget(phenny, input):
     """Forget a fact"""
@@ -92,7 +92,7 @@ def forget(phenny, input):
         phenny.say('err...')
 forget.commands = ['forget']
 forget.priority = 'medium'
-forget.example = '.forget grass'
+# forget.example = '.forget grass'
 
 
 if __name__ == '__main__': 
